@@ -1,0 +1,63 @@
+//
+//  DynamicFilteredView.swift
+//  TaskManager
+//
+//  Created by Bhumika Patel on 17/05/22.
+//
+
+import SwiftUI
+import CoreData
+
+struct DynamicFilteredView<Content: View,T>:View where T: NSManagedObject {
+    // MARK: Core data request
+    @FetchRequest var request: FetchedResults<T>
+    let content: (T)->Content
+    
+    //MARK:
+    init(currentTab: String, @ViewBuilder content: @escaping (T)->Content){
+        let calendar = Calendar.current
+        var predicate: NSPredicate!
+        
+        if currentTab == "Today"{
+            let today = calendar.startOfDay(for: Date())
+            let tommorow = calendar.date(byAdding: .day, value: 1, to: today)!
+            
+            // Filter key
+            
+            let filterKey = "deadline"
+            
+            predicate = NSPredicate(format: "\(filterKey) >= %@ AND \(filterKey) < %@ AND isCompleted == %i", argumentArray: [today,tommorow,0])
+        }else if currentTab == "Upcoming"{
+            let today = calendar.startOfDay(for: calendar.date(byAdding: .day, value: 1, to: Date())!)
+            let tommorow = Date.distantFuture
+            
+            let filterKey = "deadline"
+            
+            
+            predicate = NSPredicate(format: "\(filterKey) >= %@ AND \(filterKey) < %@ AND isCompleted == %i", argumentArray: [today,tommorow,0])
+        }else{
+            
+        }
+        
+        _request = FetchRequest(entity: T.entity(), sortDescriptors: [], predicate: nil)
+        self.content = content
+        
+        
+    }
+    var body: some View{
+        Group{
+            if request.isEmpty{
+                Text("No tasks found!!!")
+                    .font(.system(size: 16))
+                    .fontWeight(.light)
+                    .offset(y: 100)
+            }else{
+                ForEach(request,id: \.objectID){Object in
+                    self.content(Object)
+                }
+            }
+        }
+    }
+}
+
+  

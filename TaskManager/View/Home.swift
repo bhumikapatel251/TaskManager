@@ -84,7 +84,8 @@ struct Home: View {
     @ViewBuilder
     func TaskView()->some View{
         LazyVStack(spacing: 20){
-            ForEach(tasks){task in
+           //MARK:
+            DynamicFilteredView(currentTab: taskModel.currentTab){ (task: Task) in
                 TaskRowView(task: task)
             }
         }
@@ -107,7 +108,9 @@ struct Home: View {
 //                MARK:  Edit button only for noncomleted task
                 if !task.isCompleted{
                     Button{
-                        
+                        taskModel.editTask = task
+                        taskModel.openEditTask = true
+                        taskModel.setupTask()
                     }label: {
                         Image(systemName: "square.and.pencil")
                             .foregroundColor(.black)
