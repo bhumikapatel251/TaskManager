@@ -11,7 +11,7 @@ struct AddNewTask: View {
     @EnvironmentObject var taskModel: TaskViewModel
     //MARK:All environment values in one variable
     @Environment(\.self) var env
-    @Namespace var animarion
+    @Namespace var animation
     var body: some View {
         VStack(spacing: 12){
             Text("Edit Text")
@@ -75,7 +75,7 @@ struct AddNewTask: View {
             .frame(maxWidth: .infinity,alignment: .leading)
             .overlay(alignment: .bottomTrailing){
                 Button{
-                    
+                    taskModel.showDatePicker.toggle()
                 } label: {
                     Image(systemName: "calendar")
                         .foregroundColor(.black)
@@ -111,7 +111,7 @@ struct AddNewTask: View {
                                     if taskModel.taskType == type{
                                         Capsule()
                                             .fill(.black)
-                                            .matchedGeometryEffect(id: "TYPE", in: animarion)
+                                            .matchedGeometryEffect(id: "TYPE", in: animation)
                                     }else{
                                         Capsule()
                                             .strokeBorder(.black)
@@ -157,7 +157,27 @@ struct AddNewTask: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
-       
+        .overlay{
+            ZStack {
+                if taskModel.showDatePicker{
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            taskModel.showDatePicker = false
+                        }
+                    //MARK: Disable Past Date
+                    DatePicker.init("", selection: $taskModel.taskDeadLine, in: Date.now...Date.distantFuture)
+                            .datePickerStyle(.graphical)
+                            .labelsHidden()
+                            .padding()
+                            .background(.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .padding()
+                    }
+                
+                }
+            .animation(.easeInOut, value: taskModel.showDatePicker)
+        }
     }
 }
 
