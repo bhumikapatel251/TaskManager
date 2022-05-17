@@ -11,6 +11,10 @@ struct Home: View {
     @StateObject var taskModel: TaskViewModel = .init()
     //MARK: Matched Geometry Names
     @Namespace var animation
+    
+//    MARK: Fetching Task
+    @FetchRequest(entity: Task.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Task.deadline, ascending: false)], predicate: nil, animation: .easeInOut) var tasks: FetchedResults<Task>
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false){
             VStack {
@@ -27,6 +31,7 @@ struct Home: View {
             CustomSegmentedBar()
                 .padding(.top,5)
             //MARK: Task View
+                TaskView()
             //Later will come
             
         }
@@ -70,6 +75,55 @@ struct Home: View {
         } content: {
             AddNewTask()
                 .environmentObject(taskModel)
+        }
+    }
+//    MARK: TaskView
+    @ViewBuilder
+    func TaskView()->some View{
+        LazyVStack(spacing: 20){
+            ForEach(tasks){task in
+                TaskRowView(task: task)
+            }
+        }
+        .padding(.top,20)
+    }
+//    MARK: Task RowView
+    func TaskRowView(task: Task)->some View{
+        VStack(alignment: .leading, spacing: 10){
+            HStack{
+                Text(task.type ?? "")
+                    .font(.callout)
+                    .padding(.vertical,5)
+                    .padding(.horizontal)
+                    .background{
+                        	Capsule()
+                            .fill(.white.opacity(0.3))
+                    }
+                Spacer()
+                
+//                MARK:  Edit button only for noncomleted task
+                if !task.isCompleted{
+                    Button{
+                        
+                    }label: {
+                        Image(systemName: "square.and.pencil")
+                            .foregroundColor(.black)
+                    }
+                }
+                
+            }
+            
+            Text(task.title ?? "")
+                .font(.title2.bold())
+                .foregroundColor(.black)
+                .padding(.vertical,10)
+            
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background{
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(task.color ?? "Yellow"))
         }
     }
     //MARK: Custom Segmented Bar
