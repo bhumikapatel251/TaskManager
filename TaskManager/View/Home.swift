@@ -33,8 +33,10 @@ struct Home: View {
         .padding()
        }
         .overlay(alignment: .bottom){
+
             //MARK:Add button
             Button{
+                taskModel.openEditTask.toggle()
                 
             }label: {
                 Label{
@@ -62,6 +64,10 @@ struct Home: View {
                 ], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
             }
+        }
+        .fullScreenCover(isPresented: $taskModel.openEditTask){
+            AddNewTask()
+                .environmentObject(taskModel)
         }
     }
     //MARK: Custom Segmented Bar
