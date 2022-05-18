@@ -14,7 +14,7 @@ struct AddNewTask: View {
     @Namespace var animation
     var body: some View {
         VStack(spacing: 12){
-            Text("Edit Text")
+            Text("Add Task")
                 .font(.title3.bold())
                 .frame(maxWidth: .infinity)
                 .overlay(alignment: .leading){
@@ -28,6 +28,7 @@ struct AddNewTask: View {
                 }
                 .overlay(alignment: .trailing){
                         Button{
+                            // deleted Task
                             if let editTask = taskModel.editTask{
                               env.managedObjectContext.delete(editTask)
                                 try? env.managedObjectContext.save()
