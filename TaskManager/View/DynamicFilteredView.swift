@@ -35,11 +35,12 @@ struct DynamicFilteredView<Content: View,T>:View where T: NSManagedObject {
             
             
             predicate = NSPredicate(format: "\(filterKey) >= %@ AND \(filterKey) < %@ AND isCompleted == %i", argumentArray: [today,tommorow,0])
-        }else{
+        }else if currentTab == "Task Done"{
             
+            predicate = NSPredicate(format: " isCompleted == %i", argumentArray: [1])
         }
         
-        _request = FetchRequest(entity: T.entity(), sortDescriptors: [], predicate: nil)
+        _request = FetchRequest(entity: T.entity(), sortDescriptors: [.init(keyPath: \Task.deadline, ascending: false)], predicate: predicate)
         self.content = content
         
         
