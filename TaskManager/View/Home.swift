@@ -106,7 +106,8 @@ struct Home: View {
                 Spacer()
                 
 //                MARK:  Edit button only for noncomleted task
-                if !task.isCompleted && taskModel.currentTab != "Failed Task" {
+                //&& taskModel.currentTab != "Failed Task" 
+                if !task.isCompleted {
                     Button{
                         taskModel.editTask = task
                         taskModel.openEditTask = true
@@ -141,8 +142,8 @@ struct Home: View {
                     .font(.caption)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-                if !task.isCompleted && taskModel.currentTab != "Failed Task"{
+                //&& taskModel.currentTab != "Failed Task"
+                if !task.isCompleted {
                     Button{
 //                        MARK: updating Coredata
                         task.isCompleted.toggle()
